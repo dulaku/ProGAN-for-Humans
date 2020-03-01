@@ -4,6 +4,8 @@ Although the paper is well-written and clear, in my experience the [original cod
 
 Thanks to [Animesh Karnewar's Pytorch implementation of ProGAN](https://github.com/akanimax/pro_gan_pytorch) for some inspiration and [Erik Linder-Norén](https://github.com/eriklindernoren/PyTorch-GAN) for inspiration on implenting straightforward GANs.
 
+Recommended reading order is progan_layers.py, progan_models.py, train.py. The dataloader and config files can be referenced as needed.
+
 Because this code's readability was the highest priority, some other features of the original project are lacking and the project is likely not "production-ready". In particular:
 
 * The code is not platform agnostic - it assumes a machine with 16 CPU cores and 2 GPUs with 8 GB VRAM apiece. Instead, comments point out these assumptions when they are made and gives guidance on changing them for different machines.
