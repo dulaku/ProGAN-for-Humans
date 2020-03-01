@@ -2,7 +2,7 @@
 A Pytorch implementation of the model presented in "Progressive Growing of GANs for Improved Quality, Stability, and Variation". The video short-training.mp4 shows a short training run of 4 passes over the dataset (120,000 images shown at each phase of training, compared to 800,000 in the original paper). The results are mildly terrifying, but hopefully get the point across.</br>
 Although the paper is well-written and clear, in my experience the [original code](https://github.com/tkarras/progressive_growing_of_gans) is dense and difficult to follow for people not already deeply familiar with Tensorflow and machine learning research code. This implementation is an attempt to improve on the accessibility of the techniques (even if many are a bit out of date these days).</br>
 
-Thanks to [Animesh Karnewar's Pytorch implementation of ProGAN](https://github.com/akanimax/pro_gan_pytorch) for some inspiration and [Erik Linder-Norén](https://github.com/eriklindernoren/PyTorch-GAN) for inspiration on implenting straightforward GANs.
+Thanks to [Animesh Karnewar's Pytorch implementation of ProGAN](https://github.com/akanimax/pro_gan_pytorch) for some inspiration  on some of the technical challenges and [Erik Linder-Norén](https://github.com/eriklindernoren/PyTorch-GAN) for inspiration on implenting straightforward GANs.
 
 Recommended reading order is progan_layers.py, progan_models.py, train.py. The dataloader and config files can be referenced as needed.
 
