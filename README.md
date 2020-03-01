@@ -1,10 +1,10 @@
 ## ProGAN For Humans
 A Pytorch implementation of the model presented in "Progressive Growing of GANs for Improved Quality, Stability, and Variation". The video short-training.mp4 shows a short training run of 4 passes over the dataset (120,000 images shown at each phase of training, compared to 800,000 in the original paper). The results are mildly terrifying, but hopefully get the point across.</br>
-Although the paper is well-written and clear, in my experience the [original code](https://github.com/tkarras/progressive_growing_of_gans) is dense and difficult to follow for people not already deeply familiar with Tensorflow and machine learning research code. This implementation is an attempt to improve on the accessibility of the techniques in use.</br>
+Although the paper is well-written and clear, in my experience the [original code](https://github.com/tkarras/progressive_growing_of_gans) is dense and difficult to follow for people not already deeply familiar with Tensorflow and machine learning research code. This implementation is an attempt to improve on the accessibility of the techniques (even if many are a bit out of date these days).</br>
 
 Thanks to [Animesh Karnewar's Pytorch implementation of ProGAN](https://github.com/akanimax/pro_gan_pytorch) for some inspiration and [Erik Linder-Norén](https://github.com/eriklindernoren/PyTorch-GAN) for inspiration on implenting straightforward GANs.
 
-Because this code's readability was the highest priority, some other features of the original project are lacking and the project is likely not "production-ready". For instance:</br>
+Because this code's readability was the highest priority, some other features of the original project are lacking and the project is likely not "production-ready". In particular:
 
 * The code is not platform agnostic - it assumes a machine with 16 CPU cores and 2 GPUs with 8 GB VRAM apiece. Instead, comments point out these assumptions when they are made and gives guidance on changing them for different machines.
 * The code assumes that the dataset consists of 1024x1024 images and does not check to ensure that there is adequate disk space for preprocessed images.
@@ -14,11 +14,11 @@ Because this code's readability was the highest priority, some other features of
 In general, I try to assume you have the paper on hand - comments don't generally explain "why"s that are covered in the paper, but instead try to give enough information that you know what part of the paper is relevant. Likewise, the code assumes a basic level of familiarity with convolutional neural networks. If you don't have that yet, I strongly recommend the following resources:
 
 * For an introduction to deep learning in general:
-** [MIT Course 6.034 Lecture 12A: Neural Nets](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-034-artificial-intelligence-fall-2010/lecture-videos/lecture-12a-neural-nets)
-** [MIT Course 6.034 Lecture 12B: Deep Neural Nets](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-034-artificial-intelligence-fall-2010/lecture-videos/lecture-12b-deep-neural-nets)
+  * [MIT Course 6.034 Lecture 12A: Neural Nets](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-034-artificial-intelligence-fall-2010/lecture-videos/lecture-12a-neural-nets)
+  * [MIT Course 6.034 Lecture 12B: Deep Neural Nets](https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-034-artificial-intelligence-fall-2010/lecture-videos/lecture-12b-deep-neural-nets)
 
 * For an introduction to convolutional neural networks and modern training techniques:
-** [Stanford CS234n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/)
+  * [Stanford CS234n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/)
 
 # Requirements:
 
