@@ -5,7 +5,7 @@ Although the paper is well-written and clear, in my experience the [original cod
 
 Thanks to [Animesh Karnewar's Pytorch implementation of ProGAN](https://github.com/akanimax/pro_gan_pytorch) for guidance on some of the technical challenges and [Erik Linder-Norén](https://github.com/eriklindernoren/PyTorch-GAN) for inspiration on implenting straightforward GANs.
 
-Recommended reading order is progan_layers.py, progan_models.py, train.py. The dataloader and config files can be referenced as needed.
+Recommended reading order is the [original paper](https://arxiv.org/abs/1710.10196), train.py, progan_models.py, progan_layers.py. The dataloader and config files can be referenced as needed.
 
 Because this code's readability was the highest priority, some other features of the original project are lacking and the project is likely not "production-ready". In particular:
 
