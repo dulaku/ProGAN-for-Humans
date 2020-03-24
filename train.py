@@ -167,7 +167,11 @@ for res_step in range(len(config.cfg.blocks)):
                 # valid.
                 optimizer_D.zero_grad()
 
-                # Sample noise for the generator's input
+                # Sample noise for the generator's input. This sample is a point in what
+                # is called the latent space (a 512-dimensional space by default). The
+                # generator's job is to map points in that space onto images; we'd like
+                # the dimensions to correspond to image features, like the direction a
+                # face is facing, but of course we can't guarantee this.
                 latent_sample = torch.cuda.FloatTensor(
                     numpy.random.normal(0, 1, (batch_size, config.cfg.latent_dim, 1, 1))
                 )
