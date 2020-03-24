@@ -54,10 +54,8 @@ class EqualizedConv2d(torch.nn.Module):
 
     The linked paper only applies scaling at initialization; this layer instead
     initializes without scaling, and does the scaling at every forward pass. This still
-    helps account for the variance during training, but since the weight's value isn't
-    changed by scaling, a large scaling factor won't reduce the value to nearly 0 and
-    thus won't ensure the gradients with respect to that weight are nearly 0 no matter
-    what the loss happens to be.
+    helps account for the variance during training, but it decouples the scaling
+    factor from the information learned during training.
     """
 
     def __init__(
