@@ -1,5 +1,5 @@
 ## ProGAN For Humans
-A Pytorch implementation of the model presented in "Progressive Growing of GANs for Improved Quality, Stability, and Variation". The video short-training.mp4 shows a short training run of 4 passes over the dataset (120,000 images shown at each phase of training, compared to 800,000 in the original paper). The results are mildly terrifying, but hopefully get the point across.
+A Pytorch implementation of the model presented in "Progressive Growing of GANs for Improved Quality, Stability, and Variation". The video short-training.mp4 shows a short training run of 4 passes over the dataset (120,000 images shown at each phase of training, compared to 800,000 in the original paper). The results are mildly terrifying, but hopefully get the point across. The video medium-training.mp4 uses a similar process for 10 epochs (300,000 images shown at each training phase).
 
 Although the paper is well-written and clear, in my experience the [original code](https://github.com/tkarras/progressive_growing_of_gans) is dense and difficult to follow for people not already deeply familiar with Tensorflow and machine learning research code. This implementation is an attempt to improve on the accessibility of the techniques (even if many are a bit out of date these days).
 
