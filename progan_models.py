@@ -297,11 +297,6 @@ class Discriminator(torch.nn.Module):
             # just return the negative of the discriminator's score
             return -torch.mean(self.score_validity(fake_img, top_blocks, blend_ratio))
         else:
-            # Normalize manually so we can parallelize it on GPU instead of CPU
-            # with torch.no_grad():
-            #     real_imgs.sub_(self.mean[:, None, None])
-            #     real_imgs.div_(self.std_dev[:, None, None])
-
             # Get the discriminator's opinion on a batch of fake images and one of real
             fake_validity = self.score_validity(fake_img, top_blocks, blend_ratio)
             real_validity = self.score_validity(real_imgs, top_blocks, blend_ratio)
