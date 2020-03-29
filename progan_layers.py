@@ -105,9 +105,6 @@ class EqualizedConv2d(torch.nn.Module):
             padding=self.padding,
         )
 
-    def extra_repr(self):
-        return ", ".join(map(str, self.weights.shape))  # Comma-separated weight shapes
-
 
 class EqualizedConvTranspose2D(torch.nn.Module):
     """
@@ -178,5 +175,3 @@ class EqualizedConvTranspose2D(torch.nn.Module):
             output_padding=self.output_padding,
         )
 
-    def extra_repr(self):
-        return ", ".join(map(str, self.weight.shape))
