@@ -37,7 +37,7 @@ class CelebDataset(torch.utils.data.Dataset):
             toImage = torchvision.transforms.ToPILImage()
             for sample in originals:
                 image = Image.open(os.path.join(source_directory, sample))
-                image = self.toTensor(image)
+                image = torchvision.transforms.functional.toTensor(image)
                 image = downsample(image)
                 image = toImage(image)
                 png_ext = ".".join(sample.split(".")[:-1]) + ".png"
