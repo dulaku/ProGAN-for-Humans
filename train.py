@@ -53,11 +53,10 @@ if pretrained is None:
         )
     ).to(device=1)
 else:
-    # Reload previously-trained weights. strict=False prevents erroring out due to the
-    # deleted to/fromRGB layers.
-    generator.load_state_dict(pretrained["generator"], strict=False)
-    discriminator.load_state_dict(pretrained["discriminator"], strict=False)
-    visualizer.load_state_dict(pretrained["visualizer"], strict=False)
+    # Reload previously-trained weights.
+    generator.load_state_dict(pretrained["generator"])
+    discriminator.load_state_dict(pretrained["discriminator"])
+    visualizer.load_state_dict(pretrained["visualizer"])
 
     # Load the visualizer sample we used earlier for continuity in visualized samples
     visualizer_sample = pretrained["visualizer_sample"]
