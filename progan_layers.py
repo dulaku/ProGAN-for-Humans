@@ -8,12 +8,12 @@ class Pixnorm(torch.nn.Module):
     as a different perspective, maps inputs to points on an N-dimensional sphere
     with radius 1, where N is the number of input dimensions.
     """
-    def forward(self, input):
-        channels = input.size()[1] # Inputs are batch x channel x height x width
+    def forward(self, in_features):
+        channels = in_features.size()[1] # Inputs are batch x channel x height x width
         normalizer = torch.sqrt(
-            1e-8 + torch.sum(input ** 2.0, dim=1, keepdim=True) / channels
+            1e-8 + torch.sum(in_features ** 2.0, dim=1, keepdim=True) / channels
         )
-        return input.div(normalizer)
+        return in_features.div(normalizer)
 
 
 class StandardDeviation(torch.nn.Module):
@@ -24,11 +24,11 @@ class StandardDeviation(torch.nn.Module):
     generated batches if the generator only learns how to generate one image,
     which forces the generator to learn a distribution of images to generate.
     """
-    def forward(self, input):
-        batch_size, _, height, width = input.shape
+    def forward(self, in_features):
+        batch_size, _, height, width = in_features.shape
 
         # B x C x H x W; Difference from the mean at each location
-        output = input - input.mean(dim=0, keepdim=True)
+        output = in_features - in_features.mean(dim=0, keepdim=True)
 
         # C x H x W; Standard deviation at each location across the batch
         output = torch.sqrt_(output.pow_(2.0).mean(dim=0, keepdim=False) + 10e-8)
@@ -40,7 +40,7 @@ class StandardDeviation(torch.nn.Module):
         output = output.repeat(batch_size, 1, height, width)
 
         # Append that channel to the original input
-        output = torch.cat([input, output], 1)
+        output = torch.cat([in_features, output], 1)
         return output
 
 
@@ -54,8 +54,10 @@ class EqualizedConv2d(torch.nn.Module):
 
     The linked paper only applies scaling at initialization; this layer instead
     initializes without scaling, and does the scaling at every forward pass. This still
-    helps account for the variance during training, but it decouples the scaling
-    factor from the information learned during training.
+    helps account for the variance during training, but since the weight's value isn't
+    changed by scaling, a large scaling factor won't reduce the value to nearly 0 and
+    thus won't ensure the gradients with respect to that weight are nearly 0 no matter
+    what the loss happens to be.
     """
 
     def __init__(
@@ -79,18 +81,16 @@ class EqualizedConv2d(torch.nn.Module):
 
         self.bias = torch.nn.Parameter(torch.FloatTensor(out_channels).fill_(0))
 
+        # He initialization scaling factor
         fan_in = kernel_size * kernel_size * in_channels
-        self.scale = numpy.sqrt(2) / numpy.sqrt(
-            fan_in
-        )  # He initialization scaling factor
+        self.scale = numpy.sqrt(2) / numpy.sqrt(fan_in)
 
-    def forward(self, x):
+    def forward(self, in_features):
         if self.downscale:
             # Pad the last two dimensions (HxW) of the kernel weights
             weight = torch.nn.functional.pad(self.weights, [1, 1, 1, 1])
-            # Blur the weights by averaging the 4 3x3 corners; if we didn't do this
-            # every second weight-pixel pair would be skipped with with the stride
-            # of 2.
+            # Blur the weights by averaging the 4 4x4 corners; if we didn't do this
+            # every second weight-pixel pair would be skipped with the stride of 2.
             weight = (  weight[:, :, :-1, :-1]
                       + weight[:, :, :-1,  1:]
                       + weight[:, :,   1:, :-1]
@@ -98,7 +98,7 @@ class EqualizedConv2d(torch.nn.Module):
         else:
             weight = self.weights
         return torch.nn.functional.conv2d(
-            input=x,
+            input=in_features,
             weight=weight * self.scale,  # Scaling weights dynamically
             bias=self.bias,
             stride=self.stride,
@@ -151,7 +151,7 @@ class EqualizedConvTranspose2D(torch.nn.Module):
 
         self.upscale = upscale
 
-    def forward(self, input):
+    def forward(self, in_features):
         if self.upscale:
             # Pad the last two dimensions (HxW) of the kernel weights
             weight = torch.nn.functional.pad(self.weights, [1, 1, 1, 1])
@@ -167,7 +167,7 @@ class EqualizedConvTranspose2D(torch.nn.Module):
         else:
             weight = self.weights
         return torch.nn.functional.conv_transpose2d(
-            input=input,
+            input=in_features,
             weight=weight,
             bias=self.bias,
             stride=self.stride,
