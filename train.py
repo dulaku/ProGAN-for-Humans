@@ -174,7 +174,11 @@ for res_step in range(len(config.cfg.blocks)):
                 latent_sample = torch.cuda.FloatTensor(
                     numpy.random.normal(0, 1, (batch_size, config.cfg.latent_dim, 1, 1))
                 )
-                fake_imgs = generator(latent_sample, top_blocks, blend_ratio)
+
+                # The discriminator's training doesn't depend on the gradients of the
+                # generator - so we can save some space for free by not storing them.
+                with torch.no_grad():
+                    fake_imgs = generator(latent_sample, top_blocks, blend_ratio)
 
                 d_loss = discriminator(fake_imgs, real_imgs, top_blocks, blend_ratio)
 

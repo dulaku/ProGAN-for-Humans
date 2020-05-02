@@ -8,8 +8,9 @@ class Pixnorm(torch.nn.Module):
     as a different perspective, maps inputs to points on an N-dimensional sphere
     with radius 1, where N is the number of input dimensions.
     """
+
     def forward(self, in_features):
-        channels = in_features.size()[1] # Inputs are batch x channel x height x width
+        channels = in_features.size()[1]  # Inputs are batch x channel x height x width
         normalizer = torch.sqrt(
             1e-8 + torch.sum(in_features ** 2.0, dim=1, keepdim=True) / channels
         )
@@ -24,6 +25,7 @@ class StandardDeviation(torch.nn.Module):
     generated batches if the generator only learns how to generate one image,
     which forces the generator to learn a distribution of images to generate.
     """
+
     def forward(self, in_features):
         batch_size, _, height, width = in_features.shape
 
@@ -67,7 +69,7 @@ class EqualizedConv2d(torch.nn.Module):
         super().__init__()
 
         # Create an empty tensor for the filter's weights, then initialize it
-       
+
         self.weights = torch.nn.Parameter(
             torch.nn.init.normal_(  # Underscore suffix for in-place operation
                 torch.empty(out_channels, in_channels, kernel_size, kernel_size)
@@ -91,10 +93,10 @@ class EqualizedConv2d(torch.nn.Module):
             weight = torch.nn.functional.pad(self.weights, [1, 1, 1, 1])
             # Blur the weights by averaging the 4 4x4 corners; if we didn't do this
             # every second weight-pixel pair would be skipped with the stride of 2.
-            weight = (  weight[:, :, :-1, :-1]
-                      + weight[:, :, :-1,  1:]
-                      + weight[:, :,   1:, :-1]
-                      + weight[:, :,   1:, 1:]) / 4.0
+            weight = (  weight[:, :,  :-1,  :-1]
+                      + weight[:, :,  :-1, 1:]
+                      + weight[:, :, 1:  ,  :-1]
+                      + weight[:, :, 1:  , 1:]) / 4.0
         else:
             weight = self.weights
         return torch.nn.functional.conv2d(
@@ -110,26 +112,29 @@ class EqualizedConvTranspose2D(torch.nn.Module):
     """
     This is a transpose convolution layer, modified to support dynamic scaling
     in the same way as the above layer. For an in-depth guide to the behavior of
-    transposed convolutions, https://arxiv.org/pdf/1603.07285v1.pdf is a good source,
+    transposed convolutions, https://arxiv.org/pdf/1603.07285v1.pdf is a good source
+    for some intuition, as is
+    https://medium.com/apache-mxnet/transposed-convolutions-explained-with-ms-excel-52d13030c7e8
     but for us the key takeaway is that transpose convolution behaves like a
     typical convolution, but padded with zeros in specific ways.
 
-    A transpose convolution with strides > 1 is equivalent to a typical convolution but
-    with extra 0s inserted between the pixels (e.g., stride 2 puts a zero pixel between
-    each pixel in each of height and width, spreading the data to twice its original
-    size). That's how we upsample.
+    Adding strides to a transpose convolution spreads where the kernel is applied to the
+    output, rather than the input - that is, you still apply the kernel to each input
+    pixel, but when you move from one input pixel to the next, the kernel's output
+    in the output image will skip several pixels instead of 1. This upscales the output.
 
-    Additionally, increased padding of a transpose convolution is equivalent to
-    _decreased_ padding of a standard convolution. That's how an unpadded 1x1 input from
-    our latent space is converted to a starting 4x4 - it's equivalent to padding the
-    input in a traditional convolution with enough 0s to multiply the input by every
-    position in the kernel (which is also equivalent to a fully-connected layer - it's
-    just a better balance of speed and memory use).
+    Additionally, "padding" a transpose convolution means discarding data from the edges
+    of the output, rather than adding empty data to the edges of the input. With no
+    padding, you get a larger output even without striding (that's how
+    an unpadded 1x1 input from our latent space is converted to a starting 4x4), while
+    the traditional amount of padding to keep the output the same size in a regular
+    convolution does the same thing in a transpose convolution.
 
     There are gotchas with transpose convolutions that can lead to bad artifacting in
     generated images, so if you want to tweak the kernel sizes, I recommend delving into
     the math a bit. https://distill.pub/2016/deconv-checkerboard/
     """
+
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
                  output_padding=0, upscale=False):
         super().__init__()
@@ -160,10 +165,10 @@ class EqualizedConvTranspose2D(torch.nn.Module):
             # average because of the 0s inserted into the source tensor by strided
             # transposed convolution, but to be honest haven't sat down to do the
             # algebra yet.
-            weight = (weight[:, :, 1:, 1:]
-                      + weight[:, :, :-1:, 1:]
-                      + weight[:, :, 1:, :-1]
-                      + weight[:, :, :-1, :-1])
+            weight = (  weight[:, :, 1:,    1:]
+                      + weight[:, :,  :-1:, 1:]
+                      + weight[:, :, 1:,     :-1]
+                      + weight[:, :,  :-1,   :-1])
         else:
             weight = self.weights
         return torch.nn.functional.conv_transpose2d(
@@ -174,4 +179,3 @@ class EqualizedConvTranspose2D(torch.nn.Module):
             padding=self.padding,
             output_padding=self.output_padding,
         )
-

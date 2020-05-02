@@ -64,7 +64,7 @@ class Generator(torch.nn.Module):
             torch.nn.Sequential(
                 # This pixnorm layer converts gaussian noise inputs to "points on a
                 # 512-dimensional hypersphere" as noted in the paper. Where 512 is
-                # the latent space dimensionality.
+                # the latent space size.
                 progan_layers.Pixnorm(),
 
                 # A 4x4 transposed convolution applied to a 1x1 input will yield a 4x4
