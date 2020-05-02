@@ -191,8 +191,6 @@ for res_step in range(len(config.cfg.blocks)):
                 # Get just the numerical loss once we no longer need the graph; frees
                 # up the memory before we compute the generator update.
                 d_loss = d_loss.item()
-                optimizer_D.zero_grad()
-                discriminator.zero_grad()
 
                 #############
                 # Generator #
@@ -208,8 +206,6 @@ for res_step in range(len(config.cfg.blocks)):
                 g_loss.backward()
                 optimizer_G.step()
                 g_loss = g_loss.item()
-                optimizer_G.zero_grad()
-                generator.zero_grad()
 
                 with torch.no_grad():
 
