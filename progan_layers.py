@@ -173,7 +173,7 @@ class EqualizedConvTranspose2D(torch.nn.Module):
             weight = self.weights
         return torch.nn.functional.conv_transpose2d(
             input=in_features,
-            weight=weight,
+            weight=weight * self.scale,  # Scaling weights dynamically,
             bias=self.bias,
             stride=self.stride,
             padding=self.padding,
